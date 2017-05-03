@@ -8,88 +8,51 @@
 
 namespace Model;
 
+include_once ('Model.php');
 
 class Comment extends Model
 {
-    public $id;
-
-    private $TYPE_TO_MESS = 0; // if comment to message
-    private $TYPE_TO_COMM = 1; // if comment to comment
-
-    public function __construct($id = null)
+    public function __construct()
     {
         parent::__construct();
 
         //name of using table
         $this->tablename = 'comments';
-
-        $this->id = $id;
     }
 
-    // add comment
-    public function addComment($content, $user_id, $message_id, $comment_id=null){
-        $this->addData('content', $content);
-        $this->addData('user_id', $user_id);
+    // Добавить коментарий
+    public function addComment($content, $user_id, $message_id){
+        $sql = "INSERT INTO $this->tablename (content , user_id, message_id) 
+                values ('$content', '$user_id', '$message_id')";
 
-        if (isset($comment_id)){
-            $this->addData('comment_id', $comment_id);
+        return $this->setExecute($sql);
+    }
+
+
+
+    //Вернуть все коментарии для сообщений
+    public function getAllComments($messages_id=[]){
+
+        $array_in = '';
+        foreach ($messages_id as $message_id){
+            $array_in .= "'$message_id',";
         }
+        $array_in = substr($array_in, 0, -1);
 
-        $this->addData('comment_id', $comment_id);
-        $this->addData('type', isset($comment_id)?$this->TYPE_TO_COMM:$this->TYPE_TO_MESS);
-        $this->addData('message_id', $message_id);
+        $sql = "SELECT comments.content,
+                       comments.id,
+                       comments.message_id,
+                       DATE_FORMAT(comments.created_at, '%e/%m/%y %k:%i') as date_time,
+                       users.name as username,
+                       users.photo,
+                       users.id as user_id,
+                       users.social_id
+                FROM comments
+                LEFT JOIN users
+                ON comments.user_id=users.id
+                WHERE comments.message_id IN ($array_in)
+                ORDER BY comments.created_at";
 
-        $new_comment = $this->insertData();
-
-        $this->id = $new_comment['id'];
-
-        return $new_comment;
+        return $this->getAllResult($sql);
     }
-
-    //get all Comments
-    public function getAllComment(){
-        $this->orderBy('created_at', true);
-
-        $comments_mess = $this->getAll();
-
-        return $this->sortOutComments($comments_mess);
-    }
-
-    //get comments for message
-    public function getMessComment($message_id){
-        $this->where("message_id = $message_id");
-        $this->orderBy('created_at', true);
-
-        $comments_mess = $this->getAll();
-
-        return $this->sortOutComments($comments_mess);
-    }
-
-    // update comment
-    public function updateComment($content){
-        $this->where("id = $this->id");
-
-        return $this->updateData('content', $content);
-    }
-
-    //delete comment
-    public function deleteComment(){
-        return $this->deleteID($this->id);
-    }
-
-    //sort out comment
-    private function sortOutComments($comments_mess){
-
-        foreach ($comments_mess as $comment_mess){
-            foreach ($comments_mess as $key => $comment_com){
-                if($comment_com['type']==1 && $comment_mess['id'] == $comment_com['comment_id']){
-                    $comment_mess['comments'][]= $comment_com;
-                    unset($comments_mess[$key]);
-                }
-            }
-        }
-
-        return $comments_mess;
-    }
-
 }

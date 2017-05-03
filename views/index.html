@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="loginApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Login page</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/bootstrap-social.css">
+    <link rel="stylesheet" href="css/my_style.css">
+    <script src="js/angular.min.js"></script>
+    <script>
+        var loginApp = angular.module('loginApp', [])
+            .controller('Login', function ($http) {
+                $http.post('../../ajax/ajax_user_is_login.php', []).then(function (data) {
+                    data.data.id && window.location.replace("message");
+                });
+            });
+    </script>
+</head>
+<body ng-controller="Login">
+    <div class="container">
+        <div class="row margin_top">
+            <div class="col-xs-5 text-center"></div>
+            <div class="col-sm-1 text-center">
+                <a type="button" class="btn btn-primary shadow font_size_25px" href="../ajax/requestAPI.php">
+                    <span class="fa fa-vk font_size_30px"></span> Войти</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

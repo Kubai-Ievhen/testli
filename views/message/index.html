@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="messageApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Messages page</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-social.css">
+    <link rel="stylesheet" href="../css/my_style.css">
+    <script src="../js/angular.min.js"></script>
+    <script src="../js/my_script.js"></script>
+</head>
+<body>
+    <div class="container" ng-controller="Messages">
+
+        <!--Header. Start-->
+        <div id="header" class="header">
+            <!--If user is login. Start-->
+            <div class="row" ng-if="login">
+                <!--User inform-->
+                <div class="row margin_bottom header_user shadow" >
+                    <div class="col-xs-9"></div>
+                    <div class="col-xs-3">
+                        <img ng-src={{user.photo}}>
+                        <a ng-href="http://vk.com/id{{user.social_id}}">{{user.name}}</a>
+                    </div>
+                </div>
+                <!--Add message-->
+                <div class="row">
+                    <form ng-submit="submitMes()">
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-xs-1"></div>
+                                <div class="col-xs-8">
+                                    <textarea ng-model="getMessage" class="col-xs-12 shadow textarea_none message" rows="5" placeholder="Введите сообщение" name="getMessage"></textarea>
+                                </div>
+                                <div class="col-xs-3">
+                                    <button type="submit" class="btn btn-primary shadow" name="submit">
+                                        <span class="fa fa-pencil"></span> Отправить</button>
+                                </div>
+                            </div>
+
+                            <!--Error input-->
+                            <div class="row" ng-show="errorMes">
+                                <div class="col-xs-1"></div>
+                                <div class="col-xs-8 text-center">
+                                    <h4 class="error">Введите сообщение! Минимальная длина сообщения 6 символов.</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--If user is login. End-->
+
+            <!--If user isn`t login. Start-->
+            <div class="row margin_top_user" ng-if="!login">
+                <div class="col-xs-5 text-center"></div>
+                <div class="col-sm-1 text-center">
+                    <a type="button" class="btn btn-primary shadow font_size_25px" href="../../ajax/requestAPI.php">
+                        <span class="fa fa-vk font_size_30px"></span> Войти</a>
+                </div>
+                <div class="row col-xs-12 text-center"><h4>Для добавления сообщений и коментариев, пожалуйста выполните вход</h4></div>
+            </div>
+            <!--If user isn`t login. End-->
+
+        </div>
+        <!--Header. End-->
+
+        <!--Body messages. Start-->
+        <div class="row" id="scroll">
+            <div class="row">
+                <!--See all comments-->
+                <div class="row margin_bottom" ng-if="messages[0].content">
+                    <div class="col-xs-6"></div>
+                    <div class="col-xs-5">
+                        <div class="col-xs-6"></div>
+                        <div class="col-xs-5">
+                            <button type="submit" class="btn btn-primary shadow font_size_20px" ng-click="allComments = !allComments; commentsShow = [];">
+                            <span class="fa fa-angle-double-{{allComments?'up':'down'}}"></span> Все коментарии
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--Message block whith comments. Start-->
+                <div class="row margin_bottom shadow header message_bkg" ng-repeat="(key, message) in messages">
+
+                    <!--Message block. Start-->
+                    <div class="row margin_bottom margin_top_msg">
+                        <div class="col-xs-1"></div>
+                        <div class="col-xs-10" ng-if="!editMessages[key]">{{message.content}}</div>
+
+                        <!--Edit message. Start-->
+                        <div class="col-xs-10" ng-if="editMessages[key] && message.user_id == user.id">
+                            <form ng-submit="submitEditMess(message.message_id)">
+                                <div class="row">
+                                    <div class="col-xs-1"></div>
+                                    <div class="col-xs-8">
+                                                    <textarea autofocus
+                                                              ng-model="dataEditMessage"
+                                                              class="col-xs-12 textarea_none"
+                                                              rows="5"
+                                                              placeholder="Введите коментарий"
+                                                              name="editComment"
+                                                              ng-value="message.content">
+                                                    </textarea>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <div class="btn-group-xs">
+                                            <button type="button" class="btn btn-primary shadow" ng-click="editMessages[key]=!editMessages[key]; editMessages=[];">
+                                                <span class="fa fa-share"></span> Отмена</button>
+                                            <br><br>
+                                            <button type="submit" class="btn btn-primary shadow">
+                                                <span class="fa fa-floppy-o"></span> Сохранить</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" ng-show="errorMessEdit">
+                                    <div class="col-xs-1"></div>
+                                    <div class="col-xs-8 text-center">
+                                        <h5 class="error">Введите сообщение! Минимальная длина сообщения 6 символов.</h5>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!--Edit message. End-->
+
+                        <div class="col-xs-1"></div>
+                    </div>
+                    <div class="row margin_bottom height_50px">
+                        <div class="col-xs-1"></div>
+                        <div class="col-xs-2">
+                            <img ng-src={{message.photo}}>
+                            <a ng-href="http://vk.com/id{{message.social_id}}">{{message.username}}</a>
+                        </div>
+                        <div class="col-xs-3 height_50px">{{message.date_time}}</div>
+                        <div class="col-xs-3 "></div>
+                        <div class="col-xs-3 text-right height_50px">
+                            <div class="btn-group btn-group-xs margin_right">
+                                <a class="btn btn-default" ng-click="editMessages[key]=!editMessages[key];" ng-if="message.user_id == user.id">
+                                    <span class="fa fa-pencil-square-o"></span> Изменить</a>
+                                <a class="btn btn-default" ng-click="deleteMessage(message.message_id)" ng-if="message.user_id == user.id">
+                                    <span class="fa fa-times"></span> Удалить</a>
+                                <a class="btn btn-default" ng-click="commentsShow[key] = !commentsShow[key]">
+                                    <span class="fa fa-window-restore"></span> Коментарии({{message.comments.length||0}})
+                                </a>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-1"></div>
+                    </div>
+                    <!--Message block. End-->
+
+                    <!--Comments block. Start-->
+                    <div class="row margin_bottom" ng-show="commentsShow[key] || allComments">
+                        <div class="col-xs-2"></div>
+                        <div class="col-xs-10">
+
+                            <!--Comments-->
+                            <div class="row" ng-repeat="(key_c,comment) in message.comments">
+                                <hr class="hr_style">
+                                <div class="row margin_bottom margin_top_msg">
+
+                                    <!--Viev comment-->
+                                    <div class="col-xs-10" ng-if="!editComments[key_c]">{{comment.content}}</div>
+
+                                    <!--Edit comment. Start-->
+                                    <div class="col-xs-10" ng-if="editComments[key_c] && comment.user_id == user.id">
+                                        <form ng-submit="submitEditComm(comment.id)">
+                                            <div class="row">
+                                                <div class="col-xs-1"></div>
+                                                <div class="col-xs-8">
+                                                    <textarea autofocus
+                                                              ng-model="dataEditComment"
+                                                              class="col-xs-12 textarea_none"
+                                                              rows="5"
+                                                              placeholder="Введите коментарий"
+                                                              name="editComment"
+                                                              ng-value="comment.content">
+                                                    </textarea>
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    <div class="btn-group-xs">
+                                                        <button type="button" class="btn btn-primary shadow" ng-click="editComments[key_c]=!editComments[key_c]; editComments=[];">
+                                                            <span class="fa fa-share"></span> Отмена</button>
+                                                        <br><br>
+                                                        <button type="submit" class="btn btn-primary shadow">
+                                                        <span class="fa fa-floppy-o"></span> Сохранить</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" ng-show="errorCommEdit">
+                                                <div class="col-xs-1"></div>
+                                                <div class="col-xs-8 text-center">
+                                                    <h5 class="error">Введите сообщение! Минимальная длина сообщения 6 символов.</h5>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!--Edit comment. end-->
+
+                                    <div class="col-xs-1"></div>
+                                </div>
+
+                                <!--User inform and drive of comment-->
+                                <div class="row margin_bottom">
+                                    <div class="col-xs-2">
+                                        <img ng-src={{comment.photo}}>
+                                        <a ng-href="http://vk.com/id{{comment.social_id}}">{{comment.username}}</a>
+                                    </div>
+                                    <div class="col-xs-3 height_50px">{{comment.date_time}}</div>
+                                    <div class="col-xs-4"></div>
+                                    <div class="col-xs-3 height_50px">
+                                        <div class="btn-group btn-group-xs margin_right">
+                                            <a class="btn btn-default" ng-click="editComments[key_c]=!editComments[key_c];" ng-if="comment.user_id == user.id">
+                                                <span class="fa fa-pencil-square-o"></span> Изменить</a>
+                                            <a class="btn btn-default" ng-click="deleteComment(comment.id)" ng-if="comment.user_id == user.id">
+                                                <span class="fa fa-times"></span> Удалить</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--Comments-->
+
+                            <!--Add comment. Start-->
+                            <div class="row margin_top_msg">
+                                <form ng-submit="submitComment(message.message_id)">
+                                    <div class="row">
+                                        <div class="col-xs-1"></div>
+                                        <div class="col-xs-8">
+                                            <textarea ng-model="getComment" class="col-xs-12 textarea_none" rows="5" placeholder="Введите коментарий" name="getComment"></textarea>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <button type="submit" class="btn btn-primary shadow">
+                                                <span class="fa fa-pencil"></span> Отправить</button>
+                                        </div>
+                                    </div>
+
+                                    <!--Error input-->
+                                    <div class="row" ng-show="errorComm">
+                                        <div class="col-xs-1"></div>
+                                        <div class="col-xs-8 text-center">
+                                            <h4 class="error">Введите сообщение! Минимальная длина сообщения 6 символов.</h4>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!--Add comment. End-->
+
+                        </div>
+                    </div>
+                    <!--Comments block. End-->
+
+                </div>
+                <!--Message block whith comments. End-->
+
+            </div>
+        </div>
+        <!--Body messages. End-->
+
+    </div>
+</body>
+</html>

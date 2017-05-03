@@ -1,0 +1,73 @@
+body{
+   background-color: lightgrey;
+}
+textarea::-webkit-input-placeholder {color:grey;}
+::-moz-placeholder          {color:black;}/* Firefox 19+ */
+:-moz-placeholder           {color:black;}/* Firefox 18- */
+:-ms-input-placeholder      {color:grey;}
+textarea.message{
+   background-color: lightgray;
+}
+
+.margin_top{
+   margin-top: 45vh;
+}
+.shadow{
+   box-shadow: 0 0 10px 3px rgba(0,0,0,0.5);
+}
+.hr_style{
+   border-color: lightgray;
+   width: 85%;
+   margin: 0 auto;
+}
+.font_size_20px{
+   font-size: 20px
+}
+.font_size_25px{
+   font-size: 25px
+}
+.font_size_30px{
+   font-size: 30px
+}
+.header{
+   margin-bottom: 2rem;
+   margin-left: auto;
+   margin-right: auto;
+}
+.textarea_none{
+   resize: none;
+}
+.margin_bottom{
+   margin-bottom: 2rem;
+}
+.margin_top_msg{
+   margin-top: 2rem;
+}
+.header_user{
+   background-color: lightgray;
+   height: 50px;
+}
+.margin_top_user{
+   margin-top: 13px;
+}
+.border_comment{
+   border-top: 10px black;
+}
+.message_bkg{
+   background-color: white;
+}
+img{
+   border-radius: 25px;
+   width: 50px;
+   height: auto;
+}
+.error{
+   color:red;
+}
+.margin_right{
+   margin-right: 10px;
+}
+.height_50px{
+   height: 50px;
+   padding-top: 15px;
+}

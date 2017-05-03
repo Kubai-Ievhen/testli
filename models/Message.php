@@ -8,49 +8,71 @@
 
 namespace Model;
 
+include_once ('Comment.php');
 
 class Message extends Model
 {
-    public $id;
-
-    public function __construct($id = null)
+    public function __construct()
     {
         parent::__construct();
 
         //name of using table
         $this->tablename = 'messages';
-
-        $this->id = $id;
     }
 
-    // add message
+    // Добавить сообщение
     public function addMessage($content, $user_id){
-        $this->addData('content', $content);
-        $this->addData('user_id', $user_id);
+        $sql = "INSERT INTO $this->tablename (content , user_id) values ('$content', '$user_id')";
 
-        $new_message = $this->insertData();
-
-        $this->id = $new_message['id'];
-
-        return $new_message;
+        return $this->setExecute($sql);
     }
 
-    //get all messages
-    public function getAllMessage(){
-        $this->orderBy('created_at', true);
+    //Вернуть сообщения, с учетом пагинации
+    public function getAllMessage($page = 1){
 
-        return $this->getAll();
-    }
+        $limit = $page>0?$page*10:10;
 
-    //update messag
-    public function updateMessage($content){
-        $this->where("id = $this->id");
+        $sql = "SELECT $this->tablename.id as message_id,
+                       $this->tablename.content,
+                       DATE_FORMAT($this->tablename.created_at, '%e/%m/%y %k:%i') as date_time,
+                       users.name as username,
+                       users.photo,
+                       users.id as user_id,
+                       users.social_id
+                FROM $this->tablename
+                LEFT JOIN users
+                ON $this->tablename.user_id=users.id
+                ORDER BY $this->tablename.created_at DESC 
+                LIMIT $limit";
 
-        return $this->updateData('content', $content);
-    }
+        $messages = $this->getAllResult($sql);
 
-    //delete message
-    public function deleteMessage(){
-        return $this->deleteID($this->id);
+        $messages_id =[];
+        foreach ($messages as $message){
+            $messages_id[] = $message['message_id'];
+        }
+
+        $comment = new Comment();
+        $comments = $comment->getAllComments($messages_id);
+
+        if(count($comments)>0){
+            foreach ($messages as $key_m=>$message){
+                $messages[$key_m]['comments'] =[];
+
+                if(count($comments)>0){
+                    foreach ($comments as $key_c=>$comment){
+                        if($message['message_id'] == $comment['message_id']){
+                            $messages[$key_m]['comments'][]=$comment;
+
+                            unset($comments[$key_c]);
+                        }
+                    }
+                }
+
+                $messages[$key_m]['count_comments']=count($messages[$key_m]['comments']);
+            }
+        }
+
+        return $messages;
     }
 }
