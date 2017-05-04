@@ -71,18 +71,18 @@
         <div class="row" id="scroll">
             <div class="row">
                 <!--See all comments-->
-                <div class="row margin_bottom" ng-if="messages[0].content">
-                    <div class="col-xs-6"></div>
-                    <div class="col-xs-5">
-                        <div class="col-xs-6"></div>
-                        <div class="col-xs-5">
-                            <button type="submit" class="btn btn-primary shadow btn-sm" ng-click="allComments = !allComments; commentsShow = [];">
-                            <span class="fa fa-angle-double-{{allComments?'up':'down'}}"></span> Все коментарии
-                            </button>
-                        </div>
+                <!--<div class="row margin_bottom" ng-if="messages[0].content">-->
+                    <!--<div class="col-xs-6"></div>-->
+                    <!--<div class="col-xs-5">-->
+                        <!--<div class="col-xs-6"></div>-->
+                        <!--<div class="col-xs-5">-->
+                            <!--<button type="submit" class="btn btn-primary shadow font_size_20px" ng-click="allComments = !allComments;">-->
+                            <!--<span class="fa fa-angle-double-{{allComments?'up':'down'}}"></span> Все коментарии-->
+                            <!--</button>-->
+                        <!--</div>-->
 
-                    </div>
-                </div>
+                    <!--</div>-->
+                <!--</div>-->
 
                 <!--Message block whith comments. Start-->
                 <div class="row margin_bottom shadow header message_bkg" ng-repeat="(key, message) in messages">
