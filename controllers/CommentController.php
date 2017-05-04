@@ -19,12 +19,22 @@ class CommentController
     {
         $this->message = new MessageController();
         $this->comment = new \Model\Comment();
-//        $this->user = new UserController();
     }
 
     //Добавить коментарий
     public function addComment(){
         $this->comment->addComment($_REQUEST['comment'], $this->message->user->user_id, $_REQUEST['message_id']);
+        return $this->message->getMessages();
+    }
+
+    //Добавить ответ
+    public function addResponse(){
+        $this->comment->addResponse($_REQUEST['comment'],
+                                    $this->message->user->user_id,
+                                    $_REQUEST['message_id'],
+                                    $_REQUEST['to_comment'],
+                                    $_REQUEST['to_user_id'],
+                                    $_REQUEST['response_to']);
         return $this->message->getMessages();
     }
 

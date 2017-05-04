@@ -136,9 +136,9 @@
                             <a ng-href="http://vk.com/id{{message.social_id}}">{{message.username}}</a>
                         </div>
                         <div class="col-xs-3 height_50px">{{message.date_time}}</div>
-                        <div class="col-xs-3 "></div>
-                        <div class="col-xs-3 text-right height_50px">
-                            <div class="btn-group btn-group-xs margin_right">
+                        <div class="col-xs-2"></div>
+                        <div class="col-xs-3 height_50px">
+                            <div class="btn-group btn-group-xs">
                                 <a class="btn btn-default" ng-click="editMessages[key]=!editMessages[key];" ng-if="message.user_id == user.id">
                                     <span class="fa fa-pencil-square-o"></span> Изменить</a>
                                 <a class="btn btn-default" ng-click="deleteMessage(message.message_id)" ng-if="message.user_id == user.id">
@@ -164,10 +164,10 @@
                                 <div class="row margin_bottom margin_top_msg">
 
                                     <!--Viev comment-->
-                                    <div class="col-xs-10" ng-if="!editComments[key_c]">{{comment.content}}</div>
+                                    <div class="col-xs-10" ng-if="!editComments[comment.id]">{{comment.content}}</div>
 
                                     <!--Edit comment. Start-->
-                                    <div class="col-xs-10" ng-if="editComments[key_c] && comment.user_id == user.id">
+                                    <div class="col-xs-10" ng-if="editComments[comment.id] && comment.user_id == user.id">
                                         <form ng-submit="submitEditComm(comment.id)">
                                             <div class="row">
                                                 <div class="col-xs-1"></div>
@@ -183,7 +183,7 @@
                                                 </div>
                                                 <div class="col-xs-3">
                                                     <div class="btn-group-xs">
-                                                        <button type="button" class="btn btn-primary shadow" ng-click="editComments[key_c]=!editComments[key_c]; editComments=[];">
+                                                        <button type="button" class="btn btn-primary shadow" ng-click="editComments[comment.id]=!editComments[comment.id]; editComments=[];">
                                                             <span class="fa fa-share"></span> Отмена</button>
                                                         <br><br>
                                                         <button type="submit" class="btn btn-primary shadow">
@@ -211,16 +211,163 @@
                                         <a ng-href="http://vk.com/id{{comment.social_id}}">{{comment.username}}</a>
                                     </div>
                                     <div class="col-xs-3 height_50px">{{comment.date_time}}</div>
-                                    <div class="col-xs-4"></div>
-                                    <div class="col-xs-3 height_50px">
+                                    <div class="col-xs-2"></div>
+                                    <div class="col-xs-5 height_50px">
                                         <div class="btn-group btn-group-xs margin_right">
-                                            <a class="btn btn-default" ng-click="editComments[key_c]=!editComments[key_c];" ng-if="comment.user_id == user.id">
+                                            <a class="btn btn-default" ng-click="editComments[comment.id]=!editComments[comment.id];" ng-if="comment.user_id == user.id">
                                                 <span class="fa fa-pencil-square-o"></span> Изменить</a>
                                             <a class="btn btn-default" ng-click="deleteComment(comment.id)" ng-if="comment.user_id == user.id">
                                                 <span class="fa fa-times"></span> Удалить</a>
+                                            <a class="btn btn-default" ng-click="responseComments[comment.id]=!responseComments[comment.id];">
+                                                <span class="fa fa-window-restore"></span> Ответы({{comment.responses.length||0}})</a>
+                                            <a class="btn btn-default" ng-click="addResponseShow[comment.id]=!addResponseShow[comment.id]" ng-if="user.id">
+                                                <span class="fa fa-pencil"></span> Ответить</a>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!--Add Response. Start-->
+                                <div class="row margin_top_msg" ng-if="addResponseShow[comment.id]&&user.id">
+                                    <form ng-submit="submitResponse(comment.id, comment.user_id, message.message_id, comment.id)">
+                                        <div class="row">
+                                            <div class="col-xs-1"></div>
+                                            <div class="col-xs-8">
+                                                <textarea ng-model="getResponse" class="col-xs-12 textarea_none" rows="5" placeholder="Введите ответ" name="getResponse"></textarea>
+                                            </div>
+                                            <div class="col-xs-2 btn-group-xs">
+                                                <button type="button" class="btn btn-primary shadow" ng-click="addResponseShow[comment.id]=!addResponseShow[comment.id]; addResponseShow = [];">
+                                                    <span class="fa fa-share"></span> Отмена</button>
+                                                <br><br>
+                                                <button type="submit" class="btn btn-primary shadow">
+                                                    <span class="fa fa-pencil"></span> Отправить</button>
+                                            </div>
+                                        </div>
+
+                                        <!--Error input-->
+                                        <div class="row" ng-show="errorResponse">
+                                            <div class="col-xs-1"></div>
+                                            <div class="col-xs-8 text-center">
+                                                <h4 class="error">Введите сообщение! Минимальная длина сообщения 6 символов.</h4>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!--Add Response. End-->
+
+                                <!--Responses to comment. Start-->
+                                <div class="row col-xs-12" ng-show="responseComments[comment.id]">
+                                    <div class="col-xs-1"></div>
+                                    <div class="col-xs-11">
+                                        <div class="row" ng-repeat="(key_r, response) in comment.responses">
+                                            <hr class="hr_style">
+                                            <div class="row margin_bottom margin_top_msg">
+
+                                                <!--Viev Response-->
+                                                <div class="col-xs-10" ng-if="!editResponse[response.id]">
+                                                    <div class="row quote_div">
+                                                        <q>
+                                                            <p>{{response.response_to_cont.substr(0,50)}}</p>
+                                                        </q>
+                                                    </div>
+                                                    <div class="row">
+                                                        <b ng-if="response.to_user_id != user.id">{{response.tousername}}</b>
+                                                        <b ng-if="response.to_user_id == user.id" class="for_you">{{response.tousername}}</b>
+                                                        , {{response.content}}
+                                                    </div>
+
+                                                </div>
+
+                                                <!--Edit Response. Start-->
+                                                <div class="col-xs-10" ng-if="editResponse[response.id] && comment.user_id == user.id">
+                                                    <form ng-submit="submitEditComm(response.id)">
+                                                        <div class="row">
+                                                            <div class="col-xs-1"></div>
+                                                            <div class="col-xs-8">
+                                                                <textarea autofocus
+                                                                          ng-model="dataEditComment"
+                                                                          class="col-xs-12 textarea_none"
+                                                                          rows="5"
+                                                                          placeholder="Введите ответ"
+                                                                          name="editComment"
+                                                                          ng-value="response.content">
+                                                                </textarea>
+                                                            </div>
+                                                            <div class="col-xs-3">
+                                                                <div class="btn-group-xs">
+                                                                    <button type="button" class="btn btn-primary shadow" ng-click="editResponse[response.id]=!editResponse[response.id]; editResponse=[];">
+                                                                        <span class="fa fa-share"></span> Отмена</button>
+                                                                    <br><br>
+                                                                    <button type="submit" class="btn btn-primary shadow">
+                                                                        <span class="fa fa-floppy-o"></span> Сохранить</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" ng-show="errorCommEdit">
+                                                            <div class="col-xs-1"></div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <h5 class="error">Введите сообщение! Минимальная длина сообщения 6 символов.</h5>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <!--Edit Response. end-->
+
+                                                <div class="col-xs-1"></div>
+                                            </div>
+
+                                            <!--User inform and drive of Response-->
+                                            <div class="row margin_bottom">
+                                                <div class="col-xs-3">
+                                                    <img ng-src={{response.photo}}>
+                                                    <a ng-href="http://vk.com/id{{response.social_id}}">{{response.username}}</a>
+                                                </div>
+                                                <div class="col-xs-3 height_50px">{{response.date_time}}</div>
+                                                <div class="col-xs-2"></div>
+                                                <div class="col-xs-4 height_50px">
+                                                    <div class="btn-group btn-group-xs margin_right">
+                                                        <a class="btn btn-default" ng-click="editResponse[response.id]=!editResponse[response.id];" ng-if="response.user_id == user.id">
+                                                            <span class="fa fa-pencil-square-o"></span> Изменить</a>
+                                                        <a class="btn btn-default" ng-click="deleteComment(response.id)" ng-if="comment.user_id == user.id">
+                                                            <span class="fa fa-times"></span> Удалить</a>
+                                                        <a class="btn btn-default" ng-click="addResponseShow[response.id]=!addResponseShow[response.id]" ng-if="user.id">
+                                                            <span class="fa fa-pencil"></span> Ответить</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!--Add Response. Start-->
+                                            <div class="row margin_top_msg" ng-if="addResponseShow[response.id]&&user.id">
+                                                <form ng-submit="submitResponse(comment.id, comment.user_id, message.message_id, response.id);">
+                                                    <div class="row">
+                                                        <div class="col-xs-1"></div>
+                                                        <div class="col-xs-8">
+                                                            <textarea ng-model="getResponse" class="col-xs-12 textarea_none" rows="5" placeholder="Введите ответ" name="getResponse"></textarea>
+                                                        </div>
+                                                        <div class="col-xs-2 btn-group-xs">
+                                                            <button type="button" class="btn btn-primary shadow" ng-click="addResponseShow[response.id]=!addResponseShow[response.id]; addResponseShow = [];">
+                                                                <span class="fa fa-share"></span> Отмена</button>
+                                                            <br><br>
+                                                            <button type="submit" class="btn btn-primary shadow">
+                                                                <span class="fa fa-pencil"></span> Отправить</button>
+                                                        </div>
+                                                    </div>
+
+                                                    <!--Error input-->
+                                                    <div class="row" ng-show="errorResponse">
+                                                        <div class="col-xs-1"></div>
+                                                        <div class="col-xs-8 text-center">
+                                                            <h4 class="error">Введите сообщение! Минимальная длина сообщения 6 символов.</h4>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <!--Add Response. End-->
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!--Response to comment. End-->
 
                             </div>
                             <!--Comments-->

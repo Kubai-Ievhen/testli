@@ -9,20 +9,26 @@ var messageApp = angular.module('messageApp', [])
     .controller('Messages', function ($scope, $http) {
 
         //Обьявление переменных
-        $scope.errorMes = false;
-        $scope.errorComm = false;
-        $scope.errorCommEdit = false;
-        $scope.errorMessEdit = false;
-        $scope.allComments = false;
+        $scope.errorMes         = false;
+        $scope.errorComm        = false;
+        $scope.errorCommEdit    = false;
+        $scope.errorMessEdit    = false;
+        $scope.errorResponse    = false;
+        $scope.allComments      = false;
 
-        $scope.getMessage = '';
-        $scope.getComment = '';
-        $scope.dataEditComment ='';
-        $scope.dataEditMessage ='';
+        $scope.getMessage       = '';
+        $scope.getComment       = '';
+        $scope.getResponse      = '';
+        $scope.dataEditComment  = '';
+        $scope.dataEditMessage  = '';
+        // $scope.dataEditResponse = '';
 
-        $scope.commentsShow = [];
-        $scope.editComments = [];
-        $scope.editMessages = [];
+        $scope.commentsShow     = [];
+        $scope.editComments     = [];
+        $scope.editMessages     = [];
+        $scope.editResponse     = [];
+        $scope.responseComments = [];
+        $scope.addResponseShow  = [];
 
         var page =1;
 
@@ -86,6 +92,28 @@ var messageApp = angular.module('messageApp', [])
             }
         };
 
+        //Добавить новый ответ
+        $scope.submitResponse = function (comment_id, comment_user_id, message_id, response_id) {
+            if(this.getResponse.length>5){
+                $scope.errorResponse = false;
+                var getResponse = this.getResponse;
+                this.getResponse = '';
+
+                $scope.addResponseShow = [];
+
+                var url = '../../ajax/comment_ajax.php?type=addresp&page='+page
+                                                    +'&comment='+getResponse
+                                                    +'&to_comment='+comment_id
+                                                    +'&message_id='+message_id
+                                                    +'&to_user_id='+comment_user_id
+                                                    +'&response_to='+response_id;
+                $scope.postGet(url);
+
+            } else {
+                $scope.errorResponse = true;
+            }
+        };
+
         //Добавить новый коментарий
         $scope.submitComment = function (message_id) {
             if(this.getComment.length>5){
@@ -110,6 +138,7 @@ var messageApp = angular.module('messageApp', [])
                 $scope.postGet(url);
 
                 $scope.editComments=[];
+                $scope.editResponse=[];
             }else if(this.dataEditComment.length != 0){
                 $scope.errorCommEdit = true;
             }

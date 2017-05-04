@@ -54,6 +54,25 @@ class Message extends Model
 
         $comment = new Comment();
         $comments = $comment->getAllComments($messages_id);
+        $responses = $comment->getAllResponses($messages_id);
+
+        if(count($responses)>0){
+            foreach ($comments as $key_c=>$comment){
+                $comments[$key_c]['responses'] =[];
+
+                if(count($responses)>0){
+                    foreach ($responses as $key_r=>$response){
+                        if($comment['id'] == $response['to_comment']){
+                            $comments[$key_c]['responses'][]=$response;
+
+                            unset($response[$key_r]);
+                        }
+                    }
+                }
+
+//                $messages[$key_m]['count_comments']=count($messages[$key_m]['comments']);
+            }
+        }
 
         if(count($comments)>0){
             foreach ($messages as $key_m=>$message){
@@ -69,7 +88,7 @@ class Message extends Model
                     }
                 }
 
-                $messages[$key_m]['count_comments']=count($messages[$key_m]['comments']);
+//                $messages[$key_m]['count_comments']=count($messages[$key_m]['comments']);
             }
         }
 

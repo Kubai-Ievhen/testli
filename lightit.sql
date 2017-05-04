@@ -8,9 +8,13 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
   `id` bigint(255) unsigned NOT NULL AUTO_INCREMENT,
-  `content` text CHARACTER SET utf8 NOT NULL,
+  `content` text NOT NULL,
   `user_id` bigint(255) NOT NULL,
   `message_id` bigint(255) NOT NULL,
+  `type_comment` int(11) NOT NULL DEFAULT '0',
+  `to_comment` bigint(255) DEFAULT '0',
+  `to_user_id` bigint(255) DEFAULT '0',
+  `response_to` bigint(255) DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
@@ -21,8 +25,16 @@ CREATE TABLE `comments` (
   CONSTRAINT `comments_ibfk_4` FOREIGN KEY (`message_id`) REFERENCES `messages` (`id`) ON DELETE CASCADE,
   CONSTRAINT `comments_ibfk_5` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `comments_ibfk_6` FOREIGN KEY (`message_id`) REFERENCES `messages` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `comments` (`id`, `content`, `user_id`, `message_id`, `type_comment`, `to_comment`, `to_user_id`, `response_to`, `created_at`) VALUES
+(1,	'ÐšÐ¾Ð¼Ð¼ÐµÐ½Ñ‚Ð°Ñ€Ð¸Ð¹ 1',	10,	78,	0,	0,	0,	0,	'2017-05-04 18:12:58'),
+(16,	'Ð¾Ñ‚Ð²ÐµÑ‚ 1',	10,	78,	1,	1,	10,	1,	'2017-05-04 19:26:35'),
+(17,	'Ð¾Ñ‚Ð²ÐµÑ‚ 2 Ð½Ð° Ð¾Ñ‚Ð²ÐµÑ‚ 1',	10,	78,	1,	1,	10,	16,	'2017-05-04 19:26:49'),
+(18,	'ÐšÐ¾Ð¼Ð¼ÐµÐ½Ñ‚Ð°Ñ€Ð¸Ð¹ 1',	10,	77,	0,	0,	0,	0,	'2017-05-04 19:41:33'),
+(19,	'ÐšÐ¾Ð¼Ð¼ÐµÐ½Ñ‚Ð°Ñ€Ð¸Ð¹ 2',	10,	77,	0,	0,	0,	0,	'2017-05-04 19:41:43'),
+(20,	'Ð¾Ñ‚Ð²ÐµÑ‚ 1',	10,	77,	1,	18,	10,	18,	'2017-05-04 19:41:54'),
+(21,	'Ð¾Ñ‚Ð²ÐµÑ‚ 1',	10,	77,	1,	19,	10,	19,	'2017-05-04 19:42:22');
 
 DROP TABLE IF EXISTS `messages`;
 CREATE TABLE `messages` (
@@ -33,7 +45,7 @@ CREATE TABLE `messages` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `messages` (`id`, `content`, `user_id`, `created_at`) VALUES
 (67,	'Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ 1',	10,	'2017-05-03 20:41:46'),
@@ -56,9 +68,9 @@ CREATE TABLE `users` (
   `photo` varchar(1000) DEFAULT NULL,
   `social_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `users` (`id`, `name`, `photo`, `social_id`) VALUES
 (10,	'Ð–ÐµÐ½Ñ ÐšÑƒÐ±Ð°Ð¹',	'https://pp.userapi.com/c636624/v636624720/7bfd/wl-U17wyQE0.jpg',	'153720720');
 
--- 2017-05-04 07:26:48
+-- 2017-05-04 19:45:44

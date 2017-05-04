@@ -71,3 +71,30 @@ img{
    height: 50px;
    padding-top: 15px;
 }
+/*q {*/
+   /*font-style: italic; !* Курсивное начертание текста *!*/
+   /*quotes: "\201c" "\201d"; !* Кавычки в виде двойных угловых скобок *!*/
+/*}*/
+
+q:before, q:after {
+   font-size: 3em;
+   font-style: italic;
+}
+q:before {
+   content: '\201c';
+   float: left;
+   margin-top: -0.4em;
+}
+q:after {
+   content: '\201e';
+   float: right;
+   margin-top: -1.2em;
+}
+q p { margin: 0.5em 1.5em; }
+
+.quote_div{
+   background: #e6e6e6;
+}
+.for_you{
+   background-color: #4cae4c;
+}

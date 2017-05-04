@@ -18,6 +18,8 @@ if($_SERVER["REQUEST_METHOD"] == 'POST'){
         $data = $comment->editComment();
     } elseif ($_REQUEST['type'] == 'delete'){
         $data = $comment->deleteComment();
+    } elseif ($_REQUEST['type'] == 'addresp'){
+        $data = $comment->addResponse();
     }
 
     echo json_encode($data);
