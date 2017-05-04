@@ -71,11 +71,6 @@ img{
    height: 50px;
    padding-top: 15px;
 }
-/*q {*/
-   /*font-style: italic; !* Курсивное начертание текста *!*/
-   /*quotes: "\201c" "\201d"; !* Кавычки в виде двойных угловых скобок *!*/
-/*}*/
-
 q:before, q:after {
    font-size: 3em;
    font-style: italic;

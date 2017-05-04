@@ -69,8 +69,6 @@ class Message extends Model
                         }
                     }
                 }
-
-//                $messages[$key_m]['count_comments']=count($messages[$key_m]['comments']);
             }
         }
 
@@ -87,8 +85,6 @@ class Message extends Model
                         }
                     }
                 }
-
-//                $messages[$key_m]['count_comments']=count($messages[$key_m]['comments']);
             }
         }
 
