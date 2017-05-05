@@ -19,10 +19,15 @@
             <div class="row" ng-if="login">
                 <!--User inform-->
                 <div class="row margin_bottom header_user shadow" >
-                    <div class="col-xs-9"></div>
+                    <div class="col-xs-8"></div>
+                    <div class="col-xs-1">
+                        <a class="btn btn-primary btn-sm btn_margin" href="../../ajax/logout.php">
+                            <span class="fa fa-hand-paper-o"></span> Выйти
+                        </a>
+                    </div>
                     <div class="col-xs-3">
                         <img ng-src={{user.photo}}>
-                        <a ng-href="http://vk.com/id{{user.social_id}}">{{user.name}}</a>
+                        <a ng-href="http://vk.com/id{{user.social_id}}"> {{user.name}}</a>
                     </div>
                 </div>
                 <!--Add message-->
