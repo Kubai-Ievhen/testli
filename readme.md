@@ -1,6 +1,6 @@
-##Testing project
+## Testing project
 
-###Technologies:
+### Technologies:
 - native PHP 7.0
 - SQL (MySQL database)
 - bootstrap
